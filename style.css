@@ -1,4 +1,4 @@
-
+/* Import Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@300;400;500;700&display=swap');
 
 /* Reset & Variables */
@@ -397,7 +397,7 @@ nav ul li a:hover {
 
 .hero h1 {
     font-size: 64px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     background: var(--gradient-1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -410,16 +410,23 @@ nav ul li a:hover {
 .hero p {
     font-size: 20px;
     color: var(--text-secondary);
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     animation: fadeInUp 1s ease 0.2s both;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: var(--text-light);
+    margin-bottom: 30px;
+    animation: fadeInUp 1s ease 0.3s both;
 }
 
 .hero-buttons {
     display: flex;
     gap: 20px;
     justify-content: center;
-    margin-bottom: 40px;
-    animation: fadeInUp 1s ease 0.4s both;
+    margin-bottom: 30px;
+    animation: fadeInUp 1s ease 0.5s both;
 }
 
 .btn {
@@ -487,7 +494,7 @@ nav ul li a:hover {
     display: flex;
     gap: 20px;
     justify-content: center;
-    animation: fadeInUp 1s ease 0.6s both;
+    animation: fadeInUp 1s ease 0.7s both;
 }
 
 .hero-social a {
@@ -621,6 +628,42 @@ section:nth-child(even) {
     margin-bottom: 24px;
     color: var(--text-secondary);
     font-size: 17px;
+}
+
+/* About Highlights */
+.about-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.highlight-item {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 10px 15px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+}
+
+.highlight-item:hover {
+    background: rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+}
+
+.highlight-item i {
+    color: #10b981;
+    font-size: 16px;
+}
+
+.highlight-item span {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .personal-info {
@@ -1157,6 +1200,10 @@ section:nth-child(even) {
     transition-delay: 0.1s;
 }
 
+.project-links a:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
 .project-links a:hover {
     background: var(--gradient-1);
     color: white;
@@ -1231,6 +1278,53 @@ section:nth-child(even) {
     transform: scale(1.05);
     border-color: transparent;
     box-shadow: var(--glow-secondary);
+}
+
+/* Achievements Section */
+.achievements {
+    background: var(--bg-secondary);
+    padding: 80px 0;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.achievement-item {
+    background: var(--bg-tertiary);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: var(--blur-sm);
+}
+
+.achievement-item:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-xl), var(--glow-primary);
+    border-color: var(--primary);
+}
+
+.achievement-item i {
+    font-size: 40px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+}
+
+.achievement-item h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.achievement-item p {
+    color: var(--text-secondary);
+    font-size: 14px;
 }
 
 /* Hobbies Section */
@@ -1587,6 +1681,83 @@ footer::before {
     z-index: 1;
 }
 
+/* Download Buttons - CV Only - Matching Hire Me Button */
+.hero-download-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    animation: fadeInUp 1s ease 0.4s both;
+}
+
+.btn-download {
+    background: var(--gradient-1);
+    color: white;
+    padding: 14px 30px;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg), var(--glow-primary);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-download i {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.btn-download::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.btn-download:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-download:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: var(--shadow-xl), var(--glow-primary);
+    background: var(--gradient-1);
+}
+
+.btn-download:hover i {
+    transform: translateY(-2px);
+}
+
+.about-download {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.footer-download {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
 /* Animations */
 @keyframes fadeInUp {
     from {
@@ -1613,7 +1784,8 @@ footer::before {
 .project-card,
 .timeline-item,
 .hobby-item,
-.contact-item {
+.contact-item,
+.achievement-item {
     opacity: 0;
     transform: translateY(40px);
     transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1623,7 +1795,8 @@ footer::before {
 .project-card.revealed,
 .timeline-item.revealed,
 .hobby-item.revealed,
-.contact-item.revealed {
+.contact-item.revealed,
+.achievement-item.revealed {
     opacity: 1;
     transform: translateY(0);
 }
@@ -1732,6 +1905,20 @@ footer::before {
         font-size: 18px;
     }
     
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .hero-download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-download {
+        width: 100%;
+        justify-content: center;
+    }
+    
     .about-content,
     .contact-content {
         grid-template-columns: 1fr;
@@ -1741,6 +1928,10 @@ footer::before {
         order: -1;
         max-width: 400px;
         margin: 0 auto;
+    }
+    
+    .about-download {
+        justify-content: center;
     }
     
     .personal-info {
@@ -1775,6 +1966,10 @@ footer::before {
     
     .project-image {
         height: 200px;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: 1fr;
     }
     
     .hobbies-grid {
@@ -1819,5 +2014,9 @@ footer::before {
     
     .contact-form {
         padding: 30px;
+    }
+    
+    .footer-download {
+        justify-content: center;
     }
 }
