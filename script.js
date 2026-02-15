@@ -1,6 +1,6 @@
-// Initialize EmailJS
+// Initialize EmailJS with your User ID
 (function() {
-    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
+    emailjs.init("cd_X3hj5z-I9ji8PU"); // Your EmailJS User ID
 })();
 
 // Custom Cursor
@@ -106,67 +106,246 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Contact Form Handling
-const contactForm = document.getElementById('contactForm');
-
-contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        message: document.getElementById('message').value
-    };
-    
-    // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
-    submitBtn.disabled = true;
-    
-    // Send email using EmailJS
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-        from_name: formData.name,
-        from_email: formData.email,
-        message: formData.message,
-        to_email: 'sumanamondal329@gmail.com'
-    })
-    .then(function(response) {
-        alert('Message sent successfully! I\'ll get back to you soon.');
-        contactForm.reset();
-    }, function(error) {
-        alert('Failed to send message. Please try again or email me directly.');
-    })
-    .finally(() => {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+// Download CV functionality
+document.querySelectorAll('.btn-download').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get the file path from href
+        const filePath = this.getAttribute('href');
+        const fileName = filePath.split('/').pop() || 'Sumana_Mondal_CV.pdf';
+        
+        // Show download message
+        showNotification(`Downloading ${fileName}...`, 'info');
+        
+        // Try to fetch the file
+        fetch(filePath)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Create blob URL and trigger download
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                
+                showNotification(`${fileName} downloaded successfully!`, 'success');
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                showNotification('CV file not found. Please contact me directly.', 'error');
+            });
     });
 });
 
+// Contact Form Handling with your EmailJS credentials
+const contactForm = document.getElementById('contactForm');
+
+// Function to show notification
+function showNotification(message, type = 'success') {
+    // Remove any existing notification
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 5000);
+}
+
+// Add notification styles
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--bg-tertiary);
+        border-left: 4px solid var(--primary);
+        border-radius: var(--radius-md);
+        padding: 16px 24px;
+        box-shadow: var(--shadow-xl), var(--glow-primary);
+        z-index: 10000;
+        transform: translateX(120%);
+        transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        backdrop-filter: var(--blur-md);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .notification-content i {
+        font-size: 24px;
+    }
+    
+    .notification-success {
+        border-left-color: var(--success);
+    }
+    
+    .notification-success i {
+        color: var(--success);
+    }
+    
+    .notification-error {
+        border-left-color: var(--danger);
+    }
+    
+    .notification-error i {
+        color: var(--danger);
+    }
+    
+    .notification-info {
+        border-left-color: var(--primary);
+    }
+    
+    .notification-info i {
+        color: var(--primary);
+    }
+    
+    .notification-content span {
+        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 500;
+    }
+`;
+document.head.appendChild(notificationStyles);
+
+// Email validation function
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Contact form submission with your EmailJS credentials
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            message: document.getElementById('message').value.trim()
+        };
+        
+        // Validate form
+        if (!formData.name || !formData.email || !formData.message) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+        
+        if (!isValidEmail(formData.email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+        
+        // Send email using EmailJS with your credentials
+        emailjs.send(
+            'service_sumana',           // Your Service ID
+            'template_h4sextq',         // Your Template ID
+            {
+                from_name: formData.name,
+                from_email: formData.email,
+                message: formData.message,
+                to_email: 'sumanamondal329@gmail.com',
+                reply_to: formData.email
+            }
+        )
+        .then(function(response) {
+            // Success message
+            showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+            contactForm.reset();
+            
+            // Remove focused class from form inputs
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('focused');
+            });
+        })
+        .catch(function(error) {
+            // Error message
+            console.error('EmailJS Error:', error);
+            showNotification('Failed to send message. Please try again or email me directly.', 'error');
+        })
+        .finally(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+}
+
 // Active navigation highlighting
-const sections = document.querySelectorAll('section');
+const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('nav ul li a');
 
-window.addEventListener('scroll', () => {
+function updateActiveNavLink() {
     let current = '';
+    const scrollPosition = window.scrollY + 100; // Offset for header
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
+        const sectionBottom = sectionTop + section.offsetHeight;
         
-        if (pageYOffset >= sectionTop - 200) {
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
             current = section.getAttribute('id');
         }
     });
     
     navLinks.forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
+        const href = link.getAttribute('href').replace('#', '');
+        if (href === current) {
             link.classList.add('active');
         }
     });
-});
+}
+
+window.addEventListener('scroll', updateActiveNavLink);
+window.addEventListener('load', updateActiveNavLink);
 
 // Form input animation
 const formInputs = document.querySelectorAll('.form-group input, .form-group textarea');
@@ -189,7 +368,7 @@ formInputs.forEach(input => {
 });
 
 // Scroll reveal animation
-const revealElements = document.querySelectorAll('.skill-item, .project-card, .timeline-item, .hobby-item, .contact-item');
+const revealElements = document.querySelectorAll('.skill-item, .project-card, .timeline-item, .hobby-item, .contact-item, .achievement-item');
 
 function reveal() {
     revealElements.forEach(element => {
@@ -227,24 +406,26 @@ window.addEventListener('scroll', () => {
 
 // Typing effect for hero title
 const heroTitle = document.querySelector('.hero h1');
-const originalText = heroTitle.textContent;
-heroTitle.textContent = '';
-heroTitle.style.display = 'inline-block';
-heroTitle.style.borderRight = '3px solid var(--primary)';
-
-let i = 0;
-function typeWriter() {
-    if (i < originalText.length) {
-        heroTitle.textContent += originalText.charAt(i);
-        i++;
-        setTimeout(typeWriter, 100);
-    } else {
-        heroTitle.style.borderRight = 'none';
+if (heroTitle) {
+    const originalText = heroTitle.textContent;
+    heroTitle.textContent = '';
+    heroTitle.style.display = 'inline-block';
+    heroTitle.style.borderRight = '3px solid var(--primary)';
+    
+    let i = 0;
+    function typeWriter() {
+        if (i < originalText.length) {
+            heroTitle.textContent += originalText.charAt(i);
+            i++;
+            setTimeout(typeWriter, 100);
+        } else {
+            heroTitle.style.borderRight = 'none';
+        }
     }
+    
+    // Start typing effect after loader
+    setTimeout(typeWriter, 1000);
 }
-
-// Start typing effect after loader
-setTimeout(typeWriter, 1000);
 
 // Year update in footer
 const yearElement = document.querySelector('.copyright p');
@@ -253,25 +434,26 @@ if (yearElement) {
     yearElement.innerHTML = yearElement.innerHTML.replace('2025', currentYear);
 }
 
-// Particle effect for hero section (optional)
+// Particle effect for hero section
 function createParticles() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
     
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
         const particle = document.createElement('div');
         particle.classList.add('particle');
         particle.style.cssText = `
             position: absolute;
-            width: ${Math.random() * 5}px;
-            height: ${Math.random() * 5}px;
-            background: var(--gradient-1);
+            width: ${Math.random() * 4 + 1}px;
+            height: ${Math.random() * 4 + 1}px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
             top: ${Math.random() * 100}%;
             left: ${Math.random() * 100}%;
-            opacity: ${Math.random() * 0.5};
-            animation: floatParticle ${Math.random() * 10 + 5}s linear infinite;
+            opacity: ${Math.random() * 0.3};
+            animation: floatParticle ${Math.random() * 15 + 10}s linear infinite;
             pointer-events: none;
+            z-index: 1;
         `;
         hero.appendChild(particle);
     }
@@ -281,11 +463,20 @@ function createParticles() {
 const particleStyle = document.createElement('style');
 particleStyle.textContent = `
     @keyframes floatParticle {
-        from {
+        0% {
             transform: translateY(0) translateX(0);
         }
-        to {
-            transform: translateY(-100vh) translateX(${Math.random() * 100}px);
+        25% {
+            transform: translateY(-20vh) translateX(10vw);
+        }
+        50% {
+            transform: translateY(-40vh) translateX(-10vw);
+        }
+        75% {
+            transform: translateY(-60vh) translateX(5vw);
+        }
+        100% {
+            transform: translateY(-80vh) translateX(0);
         }
     }
 `;
@@ -308,15 +499,23 @@ projectCards.forEach(card => {
 });
 
 // Intersection Observer for lazy loading images
-const images = document.querySelectorAll('img');
-const imageObserver = new IntersectionObserver((entries, observer) => {
+const images = document.querySelectorAll('img:not([loading])');
+const imageObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             const img = entry.target;
             img.classList.add('loaded');
-            observer.unobserve(img);
+            
+            // If image has data-src, set it
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+            }
+            
+            imageObserver.unobserve(img);
         }
     });
+}, {
+    rootMargin: '50px'
 });
 
 images.forEach(img => imageObserver.observe(img));
@@ -326,7 +525,7 @@ const imgStyle = document.createElement('style');
 imgStyle.textContent = `
     img {
         opacity: 0;
-        transition: opacity 0.5s;
+        transition: opacity 0.5s ease;
     }
     img.loaded {
         opacity: 1;
@@ -339,10 +538,38 @@ const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('section-visible');
+            
+            // Trigger reveal for elements within the section
+            const elements = entry.target.querySelectorAll('.skill-item, .project-card, .timeline-item, .hobby-item, .contact-item, .achievement-item');
+            elements.forEach(el => {
+                el.classList.add('revealed');
+            });
         }
     });
-}, { threshold: 0.1 });
+}, { threshold: 0.1, rootMargin: '0px' });
 
 document.querySelectorAll('section').forEach(section => {
     sectionObserver.observe(section);
 });
+
+// Handle keyboard accessibility
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('active')) {
+        nav.classList.remove('active');
+        const icon = menuToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
+});
+
+// Add touch support for mobile
+if ('ontouchstart' in window) {
+    document.querySelectorAll('.btn, .project-card, .hobby-item').forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        element.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+}
